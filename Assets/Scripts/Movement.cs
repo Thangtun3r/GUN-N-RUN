@@ -1,5 +1,8 @@
+    using System;
     using UnityEngine;
     using System.Collections;
+    using Unity.VisualScripting;
+    using TMPro;
 
     [DefaultExecutionOrder(100)]
     [RequireComponent(typeof(Rigidbody2D))]
@@ -15,10 +18,16 @@
         [Header("Pivot")] 
         public GameObject pivot;
 
-        [Header("Ground Detection")] 
-        public LayerMask groundLayer;
-        public float groundRayDistance = 0.2f;
-
+        [Header("Ground Check")]
+        public GameObject groundCheck;
+        public float groundCheckRadius = 0.2f;
+        public LayerMask groundCheckLayer;
+        private bool wasGrounded = false;
+        
+        [Header("UI Elements")]
+        public TextMeshProUGUI ammoText;
+        
+        
         Rigidbody2D rb;
         Camera mainCam;
         Vector2 propelDir;
@@ -35,51 +44,52 @@
 
         void Update()
         {
-            RotatePivotTowardMouse();
-            HandlePropelInput();
+            HandleControl();
+            HandleGroundcheck();
+            HandleUI();
         }
-
+        
         void FixedUpdate()
         {
             ApplyDownforce();
-            HandleGroundCheck();
         }
 
-        void RotatePivotTowardMouse()
+        void HandleControl()
         {
             if (pivot == null) return;
-
+            
             Vector2 mouseWorld = mainCam.ScreenToWorldPoint(Input.mousePosition);
             Vector2 pivotPos = pivot.transform.position;
             Vector2 dir = (mouseWorld - pivotPos).normalized;
             float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
             pivot.transform.rotation = Quaternion.Euler(0, 0, angle);
-        }
-
-        void HandlePropelInput()
-        {
             if (Input.GetMouseButtonDown(0) && currentAmmo > 0)
             {
-                Vector3 mouseWorld = mainCam.ScreenToWorldPoint(Input.mousePosition);
-                mouseWorld.z = 0f;
-                Vector2 toMouse = mouseWorld - transform.position;
+                Vector2 toMouse = mouseWorld - (Vector2)transform.position;
                 propelDir = -toMouse.normalized;
-
                 Propel();
             }
         }
 
-        void HandleGroundCheck()
+        void HandleGroundcheck()
         {
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, groundRayDistance, groundLayer);
-            isGrounded = hit.collider != null;
+            bool isNowGrounded = Physics2D.OverlapCircle(groundCheck.transform.position, groundCheckRadius, groundCheckLayer);
 
-            if (isGrounded)
+            if (isNowGrounded && !wasGrounded)
             {
                 currentAmmo = maxAmmo;
             }
+
+            wasGrounded = isNowGrounded;
+            isGrounded = isNowGrounded;
         }
 
+        void HandleUI()
+        {
+            ammoText.text = $"{currentAmmo}/{maxAmmo}";
+
+        }
+        
         void Propel()
         {
             rb.linearVelocity = Vector2.zero;
@@ -98,9 +108,12 @@
         }
 
 
-        void OnDrawGizmos()
+        void OnDrawGizmosSelected()
         {
+            if (groundCheck == null) return;
+
             Gizmos.color = Color.red;
-            Gizmos.DrawRay(transform.position, Vector2.down * groundRayDistance);
+            Gizmos.DrawWireSphere(groundCheck.transform.position, groundCheckRadius);
         }
+
     }
