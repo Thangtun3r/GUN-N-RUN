@@ -6,7 +6,7 @@
 
     [DefaultExecutionOrder(100)]
     [RequireComponent(typeof(Rigidbody2D))]
-    public class Movement : MonoBehaviour
+    public class Movement : Player
     {
         [Header("Settings")] 
         [SerializeField] private float propelForce = 10f;
@@ -23,6 +23,8 @@
         public float groundCheckRadius = 0.2f;
         public LayerMask groundCheckLayer;
         private bool wasGrounded = false;
+        public string safeGroundTag = "SafeGround";
+        static public bool isOnSafeGround = false;
         
         [Header("UI Elements")]
         public TextMeshProUGUI ammoText;
@@ -75,13 +77,21 @@
         {
             bool isNowGrounded = Physics2D.OverlapCircle(groundCheck.transform.position, groundCheckRadius, groundCheckLayer);
 
-            if (isNowGrounded && !wasGrounded)
+            Collider2D hit = Physics2D.OverlapCircle(groundCheck.transform.position, groundCheckRadius, groundCheckLayer);
+
+            if (hit != null && hit.CompareTag(safeGroundTag))
+            {
+                isOnSafeGround = true;
+            }
+            else
+            {
+                isOnSafeGround = false;
+            }
+            
+            if (isNowGrounded)
             {
                 currentAmmo = maxAmmo;
             }
-
-            wasGrounded = isNowGrounded;
-            isGrounded = isNowGrounded;
         }
 
         void HandleUI()
