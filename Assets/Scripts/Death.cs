@@ -3,9 +3,10 @@ using UnityEngine;
 
 public class Death : MonoBehaviour
 {
-    private void OnTriggerEnter2D(Collider2D other)
+
+    private void OnCollisionEnter2D(Collision2D other)
     {
-        IDeathAble deathAble = other.GetComponent<IDeathAble>();
+        IDeathAble deathAble = other.gameObject.GetComponent<IDeathAble>();
         if (deathAble != null)
         {
             deathAble.Die();
