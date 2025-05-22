@@ -40,6 +40,8 @@ public class Movement : Player
     
     [Header("Bullet Pool")]
     public BulletPool bulletPool;
+    
+    public static event Action OnShoot;
 
     void Awake()
     {
@@ -138,6 +140,8 @@ public class Movement : Player
         rb.linearVelocity = Vector2.zero;
         rb.linearVelocity = propelDir * propelForce;
         currentAmmo--;
+
+        OnShoot?.Invoke(); // Trigger the event
     }
 
     void ApplyDownforce()

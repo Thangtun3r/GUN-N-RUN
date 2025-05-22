@@ -5,6 +5,7 @@ public class Checkpoint : MonoBehaviour
 {
     public Vector3 checkpointPosition;
     public Transform checkpointTransform;
+    public GameObject door;
  
     
     private void OnEnable()
@@ -30,6 +31,8 @@ public class Checkpoint : MonoBehaviour
             checkpointPosition = checkpointTransform.position;
             other.GetComponent<ICheckpoint>()?.SaveCheckpoint(checkpointPosition);
             Debug.Log("Checkpoint saved at: " + checkpointPosition);
+            
+            door.SetActive(true);
         }
     }
 }
