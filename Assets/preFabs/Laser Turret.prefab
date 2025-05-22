@@ -116,7 +116,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -13.63, y: -7.41, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.3949832, y: 0.3949832, z: 0.3949832}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3121356884282319858}
@@ -136,10 +136,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nozzle: {fileID: 3121356884282319858}
   muzzlePoint: {fileID: 6657393055394703991}
-  detectionRadius: 10.92
+  detectionRadius: 16.92
   playerTag: Player
   fireRate: 1
-  rotationSpeed: 17.3
+  rotationSpeed: 10
   lineRenderer: {fileID: 7070425835064902575}
   maxLaserDistance: 100
   hitLayers:
