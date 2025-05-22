@@ -22,4 +22,6 @@ public class Player : MonoBehaviour,IDeathAble,ICheckpoint
    {
       this.currentSpawnPoint = currentSpawnPoint;
    }
+   
 }
+

@@ -6,7 +6,7 @@ public class BouncePad : MonoBehaviour
     [SerializeField] private float bounceForce;
     private Vector2 bounceDirection = Vector2.up;
     
-    void OnTriggerEnter2D(Collider2D collider)
+    void OnTriggerStay2D(Collider2D collider)
     {
         Rigidbody2D rb = collider.gameObject.GetComponent<Rigidbody2D>();
         if (rb != null)

@@ -17,6 +17,7 @@ public class Movement : Player
 
     [Header("Pivot")] 
     public GameObject pivot;
+    public GameObject shootingPoint;
 
     [Header("Ground Check")]
     public GameObject groundCheck;
@@ -36,6 +37,9 @@ public class Movement : Player
     private int currentAmmo;
     private bool isReloading;
     private bool shouldPropel = false;
+    
+    [Header("Bullet Pool")]
+    public BulletPool bulletPool;
 
     void Awake()
     {
@@ -62,6 +66,8 @@ public class Movement : Player
         ApplyDownforce();
     }
 
+    #region  Control
+
     void HandleControl()
     {
         if (pivot == null) return;
@@ -77,8 +83,26 @@ public class Movement : Player
             Vector2 toMouse = mouseWorld - (Vector2)transform.position;
             propelDir = -toMouse.normalized;
             shouldPropel = true;
+            HandleShoot();
         }
     }
+
+    void HandleShoot()
+    {
+        GameObject bulletObj = bulletPool.GetBullet();
+        bulletObj.transform.position = shootingPoint.transform.position;
+        bulletObj.transform.rotation = shootingPoint.transform.rotation;
+        bulletObj.SetActive(true);
+
+        Bullet bullet = bulletObj.GetComponent<Bullet>();
+        bullet.SetDirection(shootingPoint.transform.right);
+        
+        
+    }
+
+    #endregion
+
+    #region Ground Check
 
     void HandleGroundcheck()
     {
@@ -100,6 +124,9 @@ public class Movement : Player
             currentAmmo = maxAmmo;
         }
     }
+
+    #endregion
+    
 
     void HandleUI()
     {
