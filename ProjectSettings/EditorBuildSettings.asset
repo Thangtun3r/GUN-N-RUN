@@ -6,8 +6,35 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Level1.unity
+    path: Assets/Scenes/Level 1/Level1.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
+  - enabled: 1
+    path: Assets/Scenes/Level 2/Level2 LoadScreen.unity
+    guid: d1bc9d1a636acde4c95f5385b8bc8ae8
+  - enabled: 1
+    path: Assets/Scenes/Level3/Level3.unity
+    guid: 9f6d74c0c8b0f444583b3685ae9c7ea1
+  - enabled: 1
+    path: Assets/Scenes/Level4/Level4.unity
+    guid: 7fe3f0af17d865d4b9af1b9910e0d0f0
+  - enabled: 1
+    path: Assets/Scenes/Level 2/Level2.unity
+    guid: abf1875cbd8a601408ee113695598e4e
+  - enabled: 1
+    path: Assets/Scenes/Level3/Level3 LoadScreen.unity
+    guid: af2e538120f882b4d98547342ae46933
+  - enabled: 1
+    path: Assets/Scenes/Level3/Level3 Cutscene.unity
+    guid: 6aa3f536086f35d4b9b891340f96b3a7
+  - enabled: 1
+    path: Assets/Scenes/Level4/Level4 Cutscene.unity
+    guid: 6668148d9a5a72047b07077463d4351c
+  - enabled: 1
+    path: Assets/Scenes/Level 1/Level1 Cutscene.unity
+    guid: b694121825779f14f988c1b733177cdc
+  - enabled: 1
+    path: Assets/Scenes/Level 1/Start Screen.unity
+    guid: c3eadf3968fe7154bae0c74d13d0c0dd
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
