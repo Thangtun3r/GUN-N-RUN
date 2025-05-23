@@ -32,7 +32,8 @@ public class Checkpoint : MonoBehaviour
             other.GetComponent<ICheckpoint>()?.SaveCheckpoint(checkpointPosition);
             Debug.Log("Checkpoint saved at: " + checkpointPosition);
             
-            door.SetActive(true);
+            if (door != null)
+                door.SetActive(true);
         }
     }
 }

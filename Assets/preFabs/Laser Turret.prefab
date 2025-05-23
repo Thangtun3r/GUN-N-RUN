@@ -139,7 +139,7 @@ MonoBehaviour:
   detectionRadius: 16.92
   playerTag: Player
   fireRate: 1
-  rotationSpeed: 10
+  rotationSpeed: 18.65
   lineRenderer: {fileID: 7070425835064902575}
   maxLaserDistance: 100
   hitLayers:

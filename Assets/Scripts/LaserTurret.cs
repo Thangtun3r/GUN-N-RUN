@@ -3,29 +3,48 @@ using UnityEngine;
 public class LaserTurret : MonoBehaviour
 {
     [Header("Turret Settings")]
-    public Transform nozzle;                     // Rotating part
-    public Transform muzzlePoint;               // Tip of the turret (child of nozzle)
-    public float detectionRadius = 5f;           // Radius to detect player
-    public string playerTag = "Player";          // Player tag
-    public float fireRate = 1f;                  // Damage per second
+    public Transform nozzle;                     
+    public Transform muzzlePoint;            
+    public float detectionRadius = 5f;         
+    public string playerTag = "Player";        
+    public float fireRate = 1f;             
     [Tooltip("Rotation speed in degrees/second")]
     public float rotationSpeed = 90f;
 
     [Header("Laser Settings")]
     public LineRenderer lineRenderer;
     public float maxLaserDistance = 100f;
-    public LayerMask hitLayers = default;        // Should be set to "Default" only
+    public LayerMask hitLayers = default;        
 
     private float nextDamageTime;
+
+    // Store initial state
+    private Quaternion initialNozzleRotation;
+    private Quaternion initialTurretRotation;
+    private Vector3 initialTurretPosition;
 
     void Start()
     {
         lineRenderer.enabled = false;
+
+        if (nozzle != null)
+            initialNozzleRotation = nozzle.rotation;
+        initialTurretRotation = transform.rotation;
+        initialTurretPosition = transform.position;
+    }
+
+    void OnEnable()
+    {
+        LosingEvent.onPlayerDeath += ResetTurret;
+    }
+
+    void OnDisable()
+    {
+        LosingEvent.onPlayerDeath -= ResetTurret;
     }
 
     void Update()
     {
-        // Check for player within detection radius
         Collider2D playerCollider = Physics2D.OverlapCircle(
             transform.position,
             detectionRadius,
@@ -43,25 +62,26 @@ public class LaserTurret : MonoBehaviour
                 targetRotation,
                 rotationSpeed * Time.deltaTime
             );
-
-            // Fire direction from nozzle's right (local X+)
+            
             Vector3 startPos = muzzlePoint.position;
             Vector2 fireDir = nozzle.right;
 
-            // Show laser
-            if (!lineRenderer.enabled)
-                lineRenderer.enabled = true;
+            // Prepare ContactFilter2D to ignore triggers and filter layers
+            ContactFilter2D filter = new ContactFilter2D();
+            filter.SetLayerMask(hitLayers);
+            filter.useTriggers = false; // Ignores isTrigger colliders
 
-            // Raycast through all hits
-            RaycastHit2D[] hits = Physics2D.RaycastAll(startPos, fireDir, maxLaserDistance);
-            System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+            RaycastHit2D[] hits = new RaycastHit2D[16];
+            int hitCount = Physics2D.Raycast(startPos, fireDir, filter, hits, maxLaserDistance);
 
             Vector3 endPos = startPos + (Vector3)fireDir * maxLaserDistance;
 
-            foreach (var hit in hits)
+            for (int i = 0; i < hitCount; i++)
             {
+                var hit = hits[i];
                 if (hit.collider == null) continue;
 
+                // If hit player
                 if (hit.collider.CompareTag(playerTag))
                 {
                     if (Time.time >= nextDamageTime)
@@ -73,20 +93,19 @@ public class LaserTurret : MonoBehaviour
                         }
                         nextDamageTime = Time.time + 1f / fireRate;
                     }
-                    continue;
+                    // Don't break, keep checking if there's another collider closer
                 }
 
-
-
-                // Hit a real obstacle → stop here
-                if (((1 << hit.collider.gameObject.layer) & hitLayers) != 0)
+                // Block laser at first valid (non-trigger) collider in hitLayers (including player)
+                if (((1 << hit.collider.gameObject.layer) & hitLayers.value) != 0)
                 {
                     endPos = hit.point;
                     break;
                 }
             }
 
-            // Update beam
+            if (!lineRenderer.enabled)
+                lineRenderer.enabled = true;
             lineRenderer.SetPosition(0, startPos);
             lineRenderer.SetPosition(1, endPos);
         }
@@ -95,6 +114,21 @@ public class LaserTurret : MonoBehaviour
             if (lineRenderer.enabled)
                 lineRenderer.enabled = false;
         }
+    }
+
+    // -- RESET FUNCTION --
+    private void ResetTurret()
+    {
+        // Restore original rotation and position
+        if (nozzle != null)
+            nozzle.rotation = initialNozzleRotation;
+        transform.rotation = initialTurretRotation;
+        transform.position = initialTurretPosition;
+
+        // Reset timers, laser, etc
+        nextDamageTime = 0f;
+        if (lineRenderer != null)
+            lineRenderer.enabled = false;
     }
 
     void OnDrawGizmosSelected()

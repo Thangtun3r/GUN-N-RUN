@@ -11,7 +11,7 @@ public class BouncePad : MonoBehaviour
         Rigidbody2D rb = collider.gameObject.GetComponent<Rigidbody2D>();
         if (rb != null)
         {
-            rb.linearVelocity = Vector2.zero; // Reset the velocity to eliminate previous forces
+            rb.linearVelocity = Vector2.zero;
             rb.AddForce(transform.up * bounceForce, ForceMode2D.Impulse);
         }
     }

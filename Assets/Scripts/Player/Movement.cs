@@ -41,6 +41,9 @@ public class Movement : Player
     [Header("Bullet Pool")]
     public BulletPool bulletPool;
     
+    [Header("Effects")]
+    public ParticleSystem propelEffect;
+    
     public static event Action OnShoot;
 
     void Awake()
@@ -141,7 +144,10 @@ public class Movement : Player
         rb.linearVelocity = propelDir * propelForce;
         currentAmmo--;
 
-        OnShoot?.Invoke(); // Trigger the event
+        if (propelEffect != null)
+            propelEffect.Play();
+
+        OnShoot?.Invoke();
     }
 
     void ApplyDownforce()
