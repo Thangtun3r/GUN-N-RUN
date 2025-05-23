@@ -143,8 +143,8 @@ CircleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.052876167, y: -0.0032623445}
-  m_Radius: 1.5293393
+  m_Offset: {x: 0.02300792, y: -0.0032623445}
+  m_Radius: 2.1571085
 --- !u!198 &6207945386718923122
 ParticleSystem:
   m_ObjectHideFlags: 0

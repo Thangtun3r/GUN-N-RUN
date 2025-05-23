@@ -5,46 +5,45 @@ public class Bullet : MonoBehaviour
     [Header("Bullet Settings")]
     public float speed = 10f;
     private Vector2 direction;
-    private Collider2D bulletCollider;
     private BulletPool pool;
+    private Rigidbody2D rb;
 
     [Header("Particle Settings")]
-    public BulletParticlePool particlePool; // Assign this in Inspector or via script
+    public BulletParticlePool particlePool; // Assign in Inspector or via script
+    public LayerMask hitMask; // Assign to Tilemap/Solid layer in Inspector if you want raycast backup
 
     void Awake()
     {
-        bulletCollider = GetComponent<Collider2D>();
-        // Optionally auto-find the particle pool if not set
+        rb = GetComponent<Rigidbody2D>();
         if (particlePool == null)
             particlePool = FindObjectOfType<BulletParticlePool>();
     }
 
-    public void SetDirection(Vector2 dir)
-    {
-        direction = dir.normalized;
-    }
+    public void SetDirection(Vector2 dir) => direction = dir.normalized;
+    public void SetPool(BulletPool bulletPool) => pool = bulletPool;
+    public void SetParticlePool(BulletParticlePool pool) => particlePool = pool;
 
-    public void SetPool(BulletPool bulletPool)
+    void FixedUpdate()
     {
-        pool = bulletPool;
-    }
-
-    public void SetParticlePool(BulletParticlePool particlePool)
-    {
-        this.particlePool = particlePool;
-    }
-
-    void Update()
-    {
-        transform.position += (Vector3)(direction * speed * Time.deltaTime);
+        // Optional: Raycast backup. Remove if you don't want it.
+        Vector2 moveDelta = direction * speed * Time.fixedDeltaTime;
+        RaycastHit2D hit = Physics2D.Raycast(rb.position, direction, moveDelta.magnitude, hitMask);
+        if (hit.collider != null)
+        {
+            if (particlePool != null) particlePool.PlayParticle(hit.point);
+            if (pool != null) pool.ReturnBullet(gameObject);
+            else gameObject.SetActive(false);
+        }
+        else
+        {
+            rb.MovePosition(rb.position + moveDelta);
+        }
     }
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        // Spawn particle effect at collision point
         if (particlePool != null)
         {
-            // Get contact point (for more precise collision, otherwise use transform.position)
             Vector3 hitPoint = other.ClosestPoint(transform.position);
             particlePool.PlayParticle(hitPoint);
         }

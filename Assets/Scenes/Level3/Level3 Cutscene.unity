@@ -670,8 +670,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: "As the player exits the elevator, the power cuts out, plunging the entire
-    room into darkness. \n\nThe player mutters to himself, 'I need to find the room
-    that powers this place back up."
+    room into darkness. \n\nThe character mutters to himself, \"I need to find the
+    room that powers this place back up\"."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: b9767209599e342429893683aeaaf21e, type: 2}
   m_sharedMaterial: {fileID: 3677879876671032961, guid: b9767209599e342429893683aeaaf21e, type: 2}
